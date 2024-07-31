@@ -40,7 +40,7 @@ class HotelSearchArgs:
         self.sea_view = sea_view
 
 
-@app.get("/hotels/{hotel_name}/{hotel_id}")
+@app.get("/hotels/")
 def get_hotels(
         #  hotel_id: int,
         # hotel_name: str,
@@ -52,7 +52,8 @@ def get_hotels(
 ) -> list[SHotel]:
     # пользователь отправляет GET запрос со всеми данными (параметры функции) прямо в URL,
     # а API возвращает тип данных list[SHotel]
-    # также валидацию можно задавать в декораторе @app.get('/', response_model=list[SHotel])
+    # @app.get('/', response_model=list[SHotel])  # также валидацию можно задавать в декораторе
+
     hotels = [
         {
             "name": "Hotel1",
@@ -68,6 +69,6 @@ def get_hotels(
     return hotels
 
 
-@app.post("/booking")
+@app.post("/booking/")
 def add_booking(new_booking: SBooking):
     pass
