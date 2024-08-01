@@ -7,5 +7,5 @@ class Users(Base):
     __tablename__ = 'Users'
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    room_id: Mapped[str] = mapped_column(nullable=False)
-    user_id: Mapped[str] = mapped_column(nullable=False)
+    email: Mapped[str] = mapped_column(nullable=False)
+    hashed_password: Mapped[str] = mapped_column(nullable=False)
