@@ -20,7 +20,7 @@ class SHotel(BaseModel):
     stars: int
     hotel_id: int
 
-
+                                                                                                                      
 # способ засунуть входящие данные (параметры функции) в модель для GET запроса
 # обычный класс от BaseModel использовать нельзя, т.к. нет тела запроса
 class HotelSearchArgs:
