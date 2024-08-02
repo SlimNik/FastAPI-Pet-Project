@@ -4,8 +4,12 @@ from typing import Optional
 from fastapi import FastAPI, Query, Depends
 from pydantic import BaseModel
 
+from app.bookings.router import router as router_bookings
+
 
 app = FastAPI()
+
+app.include_router(router_bookings)
 
 
 # схема (модель) данных, в данном случае брони, нужная для валидации входящих (тело запроса) и исходящих данных
@@ -20,7 +24,7 @@ class SHotel(BaseModel):
     stars: int
     hotel_id: int
 
-                                                                                                                      
+
 # способ засунуть входящие данные (параметры функции) в модель для GET запроса
 # обычный класс от BaseModel использовать нельзя, т.к. нет тела запроса
 class HotelSearchArgs:
