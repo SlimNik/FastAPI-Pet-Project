@@ -1,5 +1,7 @@
 from fastapi import APIRouter
 
+from app.bookings.DAO import BookingDAO
+
 
 router = APIRouter(
     prefix='/bookings',
@@ -8,10 +10,5 @@ router = APIRouter(
 
 
 @router.get('')
-def get_booking():
-    pass
-
-
-@router.get('/{booking_id}')
-def get_certain_booking(booking_id):
-    return booking_id
+async def get_booking_by_id():
+    return await BookingDAO.get_by_id(1)
