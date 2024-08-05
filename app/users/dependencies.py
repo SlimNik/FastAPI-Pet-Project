@@ -38,3 +38,10 @@ async def get_current_user(token: str = Depends(get_token)) -> Users:
     if not user:
         raise UserIsNotPresentException
     return user
+
+
+async def get_current_admin_user(current_user: Users = Depends(get_current_user)) -> Users:
+    # условная проверка на роль админа
+    # if current_user.role != 'admin':
+    #     raise SomeException
+    return current_user

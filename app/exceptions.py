@@ -12,7 +12,7 @@ class DefaultException(HTTPException):
         )
 
 
-class UserAlreadyException(DefaultException):
+class UserAlreadyExistsException(DefaultException):
     status_code = status.HTTP_409_CONFLICT
     detail = 'User already exists'
 
