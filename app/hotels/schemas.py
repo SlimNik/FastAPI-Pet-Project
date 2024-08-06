@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 
 
-class SHotels(BaseModel):
+class HotelSchema(BaseModel):
     id: int
     name: str
     location: str

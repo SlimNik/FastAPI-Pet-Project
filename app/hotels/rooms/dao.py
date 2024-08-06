@@ -1,6 +1,6 @@
 from app.dao.base import BaseDAO
-from app.hotels.rooms.models import Rooms
+from app.hotels.rooms.models import RoomModel
 
 
 class RoomsDAO(BaseDAO):
-    model = Rooms
+    model = RoomModel

@@ -6,7 +6,8 @@ from jose import jwt, JWTError
 from app.config import settings
 from app.exceptions import AbsentTokenException, UserIsNotPresentException, ExpiredToeknException, InvalidTokenFormatException
 from app.users.dao import UsersDAO
-from app.users.models import Users
+from app.users.models import UserModel
+from app.users.schemas import UserSchema
 
 
 def get_token(request: Request) -> str:
@@ -19,7 +20,7 @@ def get_token(request: Request) -> str:
 # Использование Depends оправдано, поскольку запрос существует только в контексте одного эндпоинта.
 # Если бы запрос использовался в другой функции, это могло бы привести к сложной цепочке вызовов до самого эндпоинта.
 # FastAPI вызывает функцию, указанную в Depends, создавая цепочку вызовов, что упрощает управление зависимостями.
-async def get_current_user(token: str = Depends(get_token)) -> Users:
+async def get_current_user(token: str = Depends(get_token)) -> UserSchema:
     try:
         payload = jwt.decode(
             token,
@@ -40,7 +41,7 @@ async def get_current_user(token: str = Depends(get_token)) -> Users:
     return user
 
 
-async def get_current_admin_user(current_user: Users = Depends(get_current_user)) -> Users:
+async def get_current_admin_user(current_user: UserModel = Depends(get_current_user)) -> UserModel:
     # условная проверка на роль админа
     # if current_user.role != 'admin':
     #     raise SomeException

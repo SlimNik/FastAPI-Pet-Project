@@ -4,7 +4,8 @@ from pydantic import BaseModel
 
 
 # схема (модель) данных, в данном случае брони, нужная для валидации входящих (тело запроса) и исходящих данных
-class SBookings(BaseModel):
+class BookingSchema(BaseModel):
+    id: int
     room_id: int
     user_id: int
     date_from: date

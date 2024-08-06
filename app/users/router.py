@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Response, Depends
 
 from app.exceptions import UserAlreadyExistsException, InvalidLoginDataException
-from app.users.dao import UsersDAO
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
+from app.users.dao import UsersDAO
 from app.users.dependencies import get_current_user, get_current_admin_user
-from app.users.models import Users
-from app.users.schemas import SUserAuth
+from app.users.models import UserModel
+from app.users.schemas import UserAuthSchema, UserSchema
 
 
 router = APIRouter(
@@ -15,7 +15,7 @@ router = APIRouter(
 
 
 @router.post('/register')
-async def register_user(user_data: SUserAuth) -> None:
+async def register_user(user_data: UserAuthSchema) -> None:
     existing_user = await UsersDAO.get_one_or_none(email=user_data.email)
     if existing_user:
         raise UserAlreadyExistsException
@@ -24,7 +24,7 @@ async def register_user(user_data: SUserAuth) -> None:
 
 
 @router.post('/login')
-async def login_user(response: Response, user_data: SUserAuth) -> dict:
+async def login_user(response: Response, user_data: UserAuthSchema) -> dict:
     user = await authenticate_user(user_data.email, user_data.password)
     if not user:
         raise InvalidLoginDataException
@@ -39,10 +39,10 @@ async def logout_user(response: Response) -> None:
 
 
 @router.get('/me')
-async def read_me_user_data(current_user: Users = Depends(get_current_user)):
+async def get_current_user_data(current_user: UserModel = Depends(get_current_user)):
     return current_user
 
 
 @router.get('/all')
-async def read_all_user_data(current_user: Users = Depends(get_current_admin_user)):
+async def get_all_users_data(current_user: UserModel = Depends(get_current_admin_user)) -> list[UserSchema]:
     return await UsersDAO.get_all()

@@ -3,16 +3,16 @@ from datetime import date
 from sqlalchemy import select, and_, or_, func, insert
 
 from app.dao.base import BaseDAO
-from app.bookings.models import Bookings
+from app.bookings.models import BookingModel
 from app.database import async_session
-from app.hotels.rooms.models import Rooms
+from app.hotels.rooms.models import RoomModel
 
 
 class BookingsDAO(BaseDAO):
     # мы наследуем все методы из базового dao
     # и указываем модель, для которой собираемся их использовать
     # DRY во всей красе
-    model = Bookings
+    model = BookingModel
 
     @classmethod
     async def add(cls, user_id: int, room_id: int, date_from: date, date_to: date):
@@ -31,23 +31,23 @@ class BookingsDAO(BaseDAO):
         """
         async with (async_session() as session):
             booked_rooms = (
-                select(Bookings).where(
+                select(BookingModel).where(
                     and_(
-                        Bookings.room_id == room_id,
+                        BookingModel.room_id == room_id,
                         or_(
-                            Bookings.date_from.between(date_from, date_to),
-                            and_(Bookings.date_from <= date_from, Bookings.date_to >= date_from),
-                            and_(Bookings.date_from <= date_to, Bookings.date_to >= date_to)
+                            BookingModel.date_from.between(date_from, date_to),
+                            and_(BookingModel.date_from <= date_from, BookingModel.date_to >= date_from),
+                            and_(BookingModel.date_from <= date_to, BookingModel.date_to >= date_to)
                         )
                     )
                 )
             ).cte('booked_rooms')
 
             get_rooms_left = (
-                select((Rooms.quantity - func.COUNT(booked_rooms.c.room_id)).label('rooms_left'))
-                .select_from(Rooms).join(booked_rooms, booked_rooms.c.room_id == Rooms.id, isouter=True)
-                .where(Rooms.id == 1)
-                .group_by(Rooms.quantity, booked_rooms.c.room_id)
+                select((RoomModel.quantity - func.COUNT(booked_rooms.c.room_id)).label('rooms_left'))
+                .select_from(RoomModel).join(booked_rooms, booked_rooms.c.room_id == RoomModel.id, isouter=True)
+                .where(RoomModel.id == 1)
+                .group_by(RoomModel.quantity, booked_rooms.c.room_id)
             )
 
             # print(get_rooms_left.compile(engine, compile_kwargs={"literal_binds": True}))
@@ -55,16 +55,16 @@ class BookingsDAO(BaseDAO):
             rooms_left: int = rooms_left.scalar()
 
             if rooms_left:
-                get_price = select(Rooms.price).filter_by(id=room_id)
+                get_price = select(RoomModel.price).filter_by(id=room_id)
                 price = await session.execute(get_price)
                 price: int = price.scalar()
-                add_booking = insert(Bookings).values(
+                add_booking = insert(BookingModel).values(
                     user_id=user_id,
                     room_id=room_id,
                     date_from=date_from,
                     date_to=date_to,
                     price=price
-                ).returning(Bookings)  # возвращает схему
+                ).returning(BookingModel)  # возвращает схему
 
                 new_booking = await session.execute(add_booking)
                 await session.commit()

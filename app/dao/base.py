@@ -14,7 +14,8 @@ class BaseDAO:
             # result.all() возвращает список кортежей с моделями
             # result.scalars().all() возвращает список моделей
             result = await session.execute(query)
-            return result.mappings().all()
+            # return result.mappings().all()
+            return result.scalars().all()
 
     @classmethod
     async def get_one_or_none(cls, **filter_kwargs):
