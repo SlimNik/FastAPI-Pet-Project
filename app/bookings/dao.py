@@ -26,7 +26,7 @@ class BookingsDAO(BaseDAO):
             (date_from <= '2023-06-30' AND date_to >= '2023-06-30')
         )
         SELECT R.quantity - COUNT(BR.room_id) AS rooms_left
-        FROM "Rooms" R JOIN booked_rooms BR ON R.id = BR.room_id
+        FROM "Rooms" R LEFT JOIN booked_rooms BR ON R.id = BR.room_id
         WHERE R.id = 1
         GROUP BY R.quantity, BR.room_id
         """

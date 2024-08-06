@@ -15,15 +15,20 @@ class RoomsDAO(BaseDAO):
     async def get_available_rooms_by_hotel_id(cls, hotel_id: int, date_from: date, date_to: date):
         """
         WITH booked_rooms AS (
-            SELECT * FROM "Bookings"
-            WHERE (date_from BETWEEN '2023-06-10' AND '2023-06-30') OR
-                  (date_from <= '2023-06-10' AND date_to >= '2023-06-10') OR
-                  (date_from <= '2023-06-30' AND date_to >= '2023-06-30')
+            SELECT * FROM "Bookings" B RIGHT JOIN "Rooms" R ON R.id = B.room_id
+            WHERE
+            (date_from BETWEEN '2021-06-10' AND '2025-06-30') OR
+            (date_from <= '2021-06-10' AND date_to >= '2021-06-10') OR
+            (date_from <= '2025-06-30' AND date_to >= '2025-06-30')
         )
-        SELECT R.quantity - COUNT(BR.room_id) AS rooms_left
-        FROM "Rooms" R JOIN booked_rooms BR ON R.id = BR.room_id
-        WHERE R.hotel_id = hotel_id
-        GROUP BY R.quantity, BR.room_id
+        SELECT H.id, H.rooms_quantity - SUM(count) AS rooms_left
+        FROM (
+            SELECT H.id, H.rooms_quantity, COUNT(BR.room_id) AS count
+            FROM booked_rooms BR
+            RIGHT JOIN "Hotels" H ON BR.hotel_id = H.id
+            GROUP BY H.id, H.rooms_quantity, BR.room_id
+            ) AS H
+        GROUP BY H.id, H.rooms_quantity
         """
         async with async_session() as session:
             booked_rooms = (
