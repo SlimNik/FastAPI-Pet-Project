@@ -5,6 +5,6 @@ class HotelSchema(BaseModel):
     id: int
     name: str
     location: str
-    services: dict
+    services: list
     rooms_quantity: int
     image_id: int

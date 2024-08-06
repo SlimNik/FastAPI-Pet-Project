@@ -1,4 +1,4 @@
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete
 
 from app.database import async_session
 
@@ -35,5 +35,12 @@ class BaseDAO:
     async def add(cls, **data):
         async with async_session() as session:
             query = insert(cls.model).values(**data)
+            await session.execute(query)
+            await session.commit()
+
+    @classmethod
+    async def delete(cls, **filter_kwargs):
+        async with async_session() as session:
+            query = delete(cls.model).filter_by(**filter_kwargs)
             await session.execute(query)
             await session.commit()

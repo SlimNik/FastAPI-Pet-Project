@@ -7,6 +7,6 @@ class RoomSchema(BaseModel):
     name: str
     description: str
     price: int
-    services: dict
+    services: list
     quantity: int
     image_id: int
