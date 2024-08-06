@@ -12,6 +12,8 @@ router = APIRouter(
 )
 
 
+# способ засунуть входящие данные (параметры функции) в модель для GET запроса
+# обычный класс от BaseModel использовать нельзя, т.к. нет тела запроса
 # class HotelSearchArgs:
 #     def __init__(self,
 #                  hotel_id: int,
