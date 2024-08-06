@@ -2,14 +2,14 @@ from datetime import date
 
 from sqlalchemy import select, and_, or_, func, insert
 
-from app.DAO.base import BaseDAO
+from app.dao.base import BaseDAO
 from app.bookings.models import Bookings
 from app.database import async_session
-from app.rooms.models import Rooms
+from app.hotels.rooms.models import Rooms
 
 
-class BookingDAO(BaseDAO):
-    # мы наследуем все методы из базового DAO
+class BookingsDAO(BaseDAO):
+    # мы наследуем все методы из базового dao
     # и указываем модель, для которой собираемся их использовать
     # DRY во всей красе
     model = Bookings

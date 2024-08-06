@@ -5,7 +5,7 @@ from jose import jwt, JWTError
 
 from app.config import settings
 from app.exceptions import AbsentTokenException, UserIsNotPresentException, ExpiredToeknException, InvalidTokenFormatException
-from app.users.DAO import UsersDAO
+from app.users.dao import UsersDAO
 from app.users.models import Users
 
 
