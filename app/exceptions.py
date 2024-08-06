@@ -39,4 +39,4 @@ class ExpiredToeknException(DefaultException):
 
 class UserIsNotPresentException(DefaultException):
     status_code = status.HTTP_401_UNAUTHORIZED
-    detail = 'No user id'
+    detail = 'Unable to find user'
