@@ -44,5 +44,5 @@ async def get_current_user_data(current_user: UserModel = Depends(get_current_us
 
 
 @router.get('/all')
-async def get_all_users_data(current_user: UserModel = Depends(get_current_admin_user)) -> list[UserSchema]:
+async def get_all_users_data(current_user: UserModel = Depends(get_current_admin_user)):
     return await UsersDAO.get_all()

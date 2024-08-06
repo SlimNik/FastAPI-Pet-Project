@@ -32,5 +32,5 @@ async def create_booking(
 
 
 @router.delete('/{booking_id}')
-async def delete_booking(booking_id: int) -> None:
+async def delete_booking(booking_id: int, current_user: UserModel = Depends(get_current_user)) -> None:
     await BookingsDAO.delete(id=booking_id)

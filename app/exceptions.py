@@ -29,7 +29,7 @@ class InvalidTokenFormatException(DefaultException):
     detail = 'Invalid token format'
 
 
-class ExpiredToeknException(DefaultException):
+class ExpiredTokenException(DefaultException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Token expired'
 
