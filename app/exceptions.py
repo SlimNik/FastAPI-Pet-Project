@@ -6,10 +6,7 @@ class DefaultException(HTTPException):
     detail = ''
 
     def __init__(self):
-        super().__init__(
-            status_code=self.status_code,
-            detail=self.detail
-        )
+        super().__init__(status_code=self.status_code, detail=self.detail)
 
 
 class UserAlreadyExistsException(DefaultException):
@@ -40,3 +37,8 @@ class ExpiredToeknException(DefaultException):
 class UserIsNotPresentException(DefaultException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Unable to find user'
+
+
+class RoomCannotBeBookedException(DefaultException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'No free rooms left'

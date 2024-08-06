@@ -15,13 +15,6 @@ app.include_router(router_users)
 app.include_router(router_bookings)
 
 
-# схема (модель) данных, в данном случае брони, нужная для валидации входящих (тело запроса) и исходящих данных
-class SBooking(BaseModel):
-    hotel_id: int
-    date_from: datetime
-    date_to: datetime
-
-
 class SHotel(BaseModel):
     name: str
     stars: int
@@ -74,8 +67,3 @@ def get_hotels(
         }
     ]
     return hotels
-
-
-@app.post("/booking/")
-def add_booking(new_booking: SBooking):
-    pass
