@@ -6,7 +6,7 @@ from sqlalchemy.orm import aliased
 from app.bookings.models import BookingModel
 from app.dao.base import BaseDAO
 from app.database import async_session
-from app.exceptions import WrongHotelLocationException
+from app.exceptions import WrongHotelDataException
 from app.hotels.models import HotelModel
 from app.hotels.rooms.models import RoomModel
 
@@ -19,7 +19,7 @@ class HotelsDAO(BaseDAO):
         async with async_session() as session:
             rooms_left_for_hotel = await cls.get_available_rooms_by_location(location, date_from, date_to)
             if rooms_left_for_hotel is None:
-                raise WrongHotelLocationException
+                raise WrongHotelDataException
             query = (
                 select(HotelModel.__table__.columns, literal_column(str(rooms_left_for_hotel)).label('rooms_left'))
                 .where(HotelModel.location == location)

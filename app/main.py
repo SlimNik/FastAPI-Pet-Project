@@ -13,6 +13,3 @@ app.include_router(router_users)
 app.include_router(router_hotels)
 app.include_router(router_rooms)
 app.include_router(router_bookings)
-
-# 2023-05-10
-# 2023-05-20

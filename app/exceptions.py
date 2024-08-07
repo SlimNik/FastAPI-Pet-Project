@@ -44,6 +44,6 @@ class RoomCannotBeBookedException(DefaultException):
     detail = 'No free rooms left'
 
 
-class WrongHotelLocationException(DefaultException):
+class WrongHotelDataException(DefaultException):
     status_code = status.HTTP_409_CONFLICT
-    detail = 'No hotel in this location'
+    detail = 'Invalid hotel data'
