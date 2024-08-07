@@ -21,7 +21,7 @@ class HotelsDAO(BaseDAO):
             if not rooms_left_for_hotel:
                 raise RoomCannotBeBookedException
             query = (
-                select(HotelModel.__table__.columns, literal_column(str(rooms_left_for_hotel)).label('rooms_left'))
+                select(HotelModel.__table__.columns, literal_column(f'{rooms_left_for_hotel}').label('rooms_left'))
                 .where(HotelModel.location == location)
             )
             result = await session.execute(query)

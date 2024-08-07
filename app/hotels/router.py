@@ -1,6 +1,6 @@
-from datetime import date
+from datetime import date, datetime, timedelta
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 
 from app.hotels.dao import HotelsDAO
 from app.hotels.schemas import HotelSchema
@@ -42,5 +42,9 @@ async def get_hotel_by_id(hotel_id: str) -> HotelSchema:
 
 
 @router.get("/{location}")
-async def get_hotels_by_location(location: str, date_from: date, date_to: date):
+async def get_hotels_by_location(
+        location: str,
+        date_from: date = Query(..., description=f'Например {datetime.now().date()}'),
+        date_to: date = Query(..., description=f'Например {datetime.now().date() + timedelta(days=7)}')
+):
     return await HotelsDAO.get_all_hotels_by_location(location, date_from, date_to)
