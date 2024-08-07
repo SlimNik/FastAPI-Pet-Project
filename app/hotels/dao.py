@@ -1,12 +1,11 @@
 from datetime import date
 
-from sqlalchemy import select, literal_column, or_, and_, func
+from sqlalchemy import select, or_, and_, func
 from sqlalchemy.orm import aliased
 
 from app.bookings.models import BookingModel
 from app.dao.base import BaseDAO
 from app.database import async_session
-from app.exceptions import RoomCannotBeBookedException
 from app.hotels.models import HotelModel
 from app.hotels.rooms.models import RoomModel
 
@@ -16,19 +15,6 @@ class HotelsDAO(BaseDAO):
 
     @classmethod
     async def get_all_hotels_by_location(cls, location: str, date_from: date, date_to: date):
-        async with async_session() as session:
-            rooms_left_for_hotel = await cls.get_available_rooms_by_location(location, date_from, date_to)
-            if not rooms_left_for_hotel:
-                raise RoomCannotBeBookedException
-            query = (
-                select(HotelModel.__table__.columns, literal_column(f'{rooms_left_for_hotel}').label('rooms_left'))
-                .where(HotelModel.location == location)
-            )
-            result = await session.execute(query)
-            return result.mappings().all()
-
-    @classmethod
-    async def get_available_rooms_by_location(cls, location: str, date_from: date, date_to: date):
         r = aliased(RoomModel)
         bm = aliased(BookingModel)
         h = aliased(HotelModel)
@@ -56,27 +42,52 @@ class HotelsDAO(BaseDAO):
             ).cte('booked_rooms')
             br = aliased(booked_rooms)
             """
-            SELECT subq.rooms_quantity - SUM(subq.count) AS rooms_left
+            SELECT H.*, filtered_hotel_group.rooms_left
             FROM (
-                SELECT H.location, H.rooms_quantity, COUNT(BR.room_id) AS count
-                FROM booked_rooms BR
-                RIGHT JOIN "Hotels" H ON BR.hotel_id = H.id
-                GROUP BY H.location, H.rooms_quantity, BR.room_id
-            ) AS subq
-            GROUP BY subq.location, subq.rooms_quantity;
+                SELECT
+                    hotel_group.hotel_id,
+                    hotel_group.location,
+                    hotel_group.rooms_quantity - SUM(hotel_group.count) AS rooms_left
+                FROM (
+                    SELECT H.id AS hotel_id, H.location, H.rooms_quantity, COUNT(BR.room_id) AS count
+                    FROM booked_rooms BR
+                    RIGHT JOIN "Hotels" H ON BR.hotel_id = H.id
+                    GROUP BY H.id, H.location, H.rooms_quantity, BR.room_id
+                ) AS hotel_group
+                GROUP BY
+                    hotel_group.hotel_id,
+                    hotel_group.location,
+                    hotel_group.rooms_quantity
+                HAVING
+                    hotel_group.location LIKE '%Алтай%' AND
+                    hotel_group.rooms_quantity - SUM(hotel_group.count) > 0) AS filtered_hotel_group
+            LEFT JOIN "Hotels" H ON H.id = filtered_hotel_group.hotel_id;
             """
-            subq = (
-                select(h.location, h.rooms_quantity, func.COUNT(br.c.id).label('count'))
+            hotel_group = (
+                select(h.id.label('hotel_id'), h.location, h.rooms_quantity, func.COUNT(br.c.id).label('count'))
                 .select_from(h).join(br, br.c.hotel_id == h.id, isouter=True)
-                .group_by(h.location, h.rooms_quantity, br.c.room_id)
+                .group_by(h.id, h.location, h.rooms_quantity, br.c.room_id)
             ).subquery('hotel_group')
 
-            get_rooms_left_for_hotel = (
-                select(subq.c.rooms_quantity - func.SUM(subq.c.count))
-                .group_by(subq.c.location, subq.c.rooms_quantity)
-                .having(and_(subq.c.location == location), subq.c.rooms_quantity - func.SUM(subq.c.count) > 0)
+            filtered_hotel_group = (
+                select(hotel_group.c.hotel_id, hotel_group.c.location, (hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count)).label(
+                    'rooms_left'))
+                .group_by(hotel_group.c.hotel_id, hotel_group.c.location, hotel_group.c.rooms_quantity)
+                .having(and_(hotel_group.c.location.ilike(f'%{location}%'), hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count) > 0))
             )
 
-            rooms_left_for_hotel = await session.execute(get_rooms_left_for_hotel)
-            rooms_left_for_hotel: int = rooms_left_for_hotel.scalar()
-            return rooms_left_for_hotel
+            query = (
+                select(
+                    h.id,
+                    h.name,
+                    h.location,
+                    h.services,
+                    h.rooms_quantity,
+                    h.image_id,
+                    filtered_hotel_group.c.rooms_left
+                )
+                .select_from(filtered_hotel_group).join(h, h.id == filtered_hotel_group.c.hotel_id, isouter=True)
+            )
+
+            result = await session.execute(query)
+            return result.mappings().all()
