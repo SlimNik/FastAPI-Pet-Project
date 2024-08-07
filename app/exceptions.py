@@ -42,3 +42,8 @@ class UserIsNotPresentException(DefaultException):
 class RoomCannotBeBookedException(DefaultException):
     status_code = status.HTTP_409_CONFLICT
     detail = 'No free rooms left'
+
+
+class WrongHotelLocationException(DefaultException):
+    status_code = status.HTTP_409_CONFLICT
+    detail = 'No hotel in this location'
