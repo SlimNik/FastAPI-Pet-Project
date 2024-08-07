@@ -50,9 +50,12 @@ class RoomsDAO(BaseDAO):
             ORDER BY R.id;
             """
             subq = (
-                select(br.c.room_id, (br.c.quantity - func.COUNT(br.c.room_id)).label('rooms_left'))
+                select(
+                    br.c.room_id,
+                    (br.c.quantity - func.COUNT(br.c.room_id)).label('rooms_left')
+                )
                 .group_by(br.c.room_id, br.c.quantity)
-            ).subquery('H')
+            ).subquery()
 
             query = (
                 select(

@@ -40,6 +40,7 @@ class HotelsDAO(BaseDAO):
                     )
                 )
             ).cte('booked_rooms')
+
             br = aliased(booked_rooms)
             """
             SELECT H.*, filtered_hotel_group.rooms_left
@@ -64,16 +65,37 @@ class HotelsDAO(BaseDAO):
             LEFT JOIN "Hotels" H ON H.id = filtered_hotel_group.hotel_id;
             """
             hotel_group = (
-                select(h.id.label('hotel_id'), h.location, h.rooms_quantity, func.COUNT(br.c.id).label('count'))
+                select(
+                    h.id.label('hotel_id'),
+                    h.location,
+                    h.rooms_quantity, func.COUNT(br.c.id).label('count')
+                )
                 .select_from(h).join(br, br.c.hotel_id == h.id, isouter=True)
-                .group_by(h.id, h.location, h.rooms_quantity, br.c.room_id)
+                .group_by(
+                    h.id,
+                    h.location,
+                    h.rooms_quantity,
+                    br.c.room_id
+                )
             ).subquery('hotel_group')
 
             filtered_hotel_group = (
-                select(hotel_group.c.hotel_id, hotel_group.c.location, (hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count)).label(
-                    'rooms_left'))
-                .group_by(hotel_group.c.hotel_id, hotel_group.c.location, hotel_group.c.rooms_quantity)
-                .having(and_(hotel_group.c.location.ilike(f'%{location}%'), hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count) > 0))
+                select(
+                    hotel_group.c.hotel_id,
+                    hotel_group.c.location,
+                    (hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count)).label('rooms_left')
+                )
+                .group_by(
+                    hotel_group.c.hotel_id,
+                    hotel_group.c.location,
+                    hotel_group.c.rooms_quantity
+                )
+                .having(
+                    and_(
+                        hotel_group.c.location.ilike(f'%{location}%'),
+                        hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count) > 0
+                    )
+                )
             )
 
             query = (
