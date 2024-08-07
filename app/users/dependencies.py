@@ -35,7 +35,7 @@ async def get_current_user(token: str = Depends(get_token)) -> UserSchema:
     user_id: str = payload.get('sub')
     if not user_id:
         raise UserIsNotPresentException
-    user = await UsersDAO.get_by_id(model_id=int(user_id))
+    user = await UsersDAO.get_by_id(int(user_id))
     if not user:
         raise UserIsNotPresentException
     return user
