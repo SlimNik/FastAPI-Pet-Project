@@ -6,7 +6,7 @@ from sqlalchemy.orm import aliased
 from app.bookings.models import BookingModel
 from app.dao.base import BaseDAO
 from app.database import async_session
-from app.exceptions import WrongHotelDataException
+from app.exceptions import RoomCannotBeBookedException
 from app.hotels.models import HotelModel
 from app.hotels.rooms.models import RoomModel
 
@@ -15,11 +15,11 @@ class HotelsDAO(BaseDAO):
     model = HotelModel
 
     @classmethod
-    async def get_all(cls, location: str, date_from: date, date_to: date):
+    async def get_all_hotels_by_location(cls, location: str, date_from: date, date_to: date):
         async with async_session() as session:
             rooms_left_for_hotel = await cls.get_available_rooms_by_location(location, date_from, date_to)
-            if rooms_left_for_hotel is None:
-                raise WrongHotelDataException
+            if not rooms_left_for_hotel:
+                raise RoomCannotBeBookedException
             query = (
                 select(HotelModel.__table__.columns, literal_column(str(rooms_left_for_hotel)).label('rooms_left'))
                 .where(HotelModel.location == location)
@@ -74,7 +74,7 @@ class HotelsDAO(BaseDAO):
             get_rooms_left_for_hotel = (
                 select(subq.c.rooms_quantity - func.SUM(subq.c.count))
                 .group_by(subq.c.location, subq.c.rooms_quantity)
-                .having(subq.c.location == location)
+                .having(and_(subq.c.location == location), subq.c.rooms_quantity - func.SUM(subq.c.count) > 0)
             )
 
             rooms_left_for_hotel = await session.execute(get_rooms_left_for_hotel)

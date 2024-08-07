@@ -30,6 +30,12 @@ router = APIRouter(
 #         self.stars = stars
 #         self.sea_view = sea_view
 
+
+@router.get('')
+async def get_all():
+    return await HotelsDAO.get_all()
+
+
 @router.get('/id/{hotel_id}')
 async def get_hotel_by_id(hotel_id: str) -> HotelSchema:
     return await HotelsDAO.get_by_id(int(hotel_id))
@@ -37,4 +43,4 @@ async def get_hotel_by_id(hotel_id: str) -> HotelSchema:
 
 @router.get("/{location}")
 async def get_hotels_by_location(location: str, date_from: date, date_to: date):
-    return await HotelsDAO.get_all(location, date_from, date_to)
+    return await HotelsDAO.get_all_hotels_by_location(location, date_from, date_to)
