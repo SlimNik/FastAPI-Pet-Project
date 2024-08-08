@@ -17,3 +17,13 @@ class UsersDAO(BaseDAO):
             )
             result = await session.execute(query)
             return result.mappings().all()
+
+    @classmethod
+    async def get_by_id(cls, model_id: int):
+        async with async_session() as session:
+            query = select(
+                UserModel.id.label("user_id"),
+                UserModel.email
+            ).filter_by(id=model_id)
+            result = await session.execute(query)
+            return result.mappings().all()
