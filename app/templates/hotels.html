@@ -9,13 +9,12 @@
         <title>Мечтариум</title>
     </head>
     <body>
-        <div>
-            {{ date_from }}
-        </div>
-
         <div class="welcome-container">
             <p><b><i>Добро пожаловать в Мечтариум!</i></b></p>
-            <p style="font-size: 18px;">Доступно отелей по вашему запросу: {{ hotels|length }}/{{ all_hotels|length }}</p>
+            <p style="font-size: 18px;">
+                Доступно отелей с {{ request.query_params['date_from'] }} по
+                {{ request.query_params['date_to'] }}: {{ hotels|length }}/{{ all_hotels|length}}
+            </p>
         </div>
 
         <div>
@@ -26,7 +25,7 @@
                 <div class="hotel-container-text">
                     <h2>{{ hotel.name }}</h2>
                     <h4>{{ hotel.location }}</h4>
-                    <p>Доступно комнат: {{ hotel.rooms_left }}/{{ hotel.rooms_quantity }}</p>
+                    <p>Свободные номера: {{ hotel.rooms_left }}/{{ hotel.rooms_quantity }}</p>
                 </div>
             </div>
             {% endfor %}

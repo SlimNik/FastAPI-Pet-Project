@@ -22,5 +22,9 @@ async def get_hotels_page(
 ):
     return templates.TemplateResponse(
         name="hotels.html",
-        context={"request": request, "hotels": hotels, "all_hotels": all_hotels}
+        context={
+            "request": request,
+            "hotels": hotels,
+            "all_hotels": all_hotels
+        }
     )
