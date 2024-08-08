@@ -12,7 +12,7 @@ class UsersDAO(BaseDAO):
     async def get_all(cls):
         async with async_session() as session:
             query = select(
-                UserModel.id.label('user_id'),
+                UserModel.id.label('user_id"),
                 UserModel.email
             )
             result = await session.execute(query)

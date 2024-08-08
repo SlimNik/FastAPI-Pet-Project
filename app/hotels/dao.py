@@ -96,7 +96,7 @@ class HotelsDAO(BaseDAO):
                         hotel_group.c.rooms_quantity - func.SUM(hotel_group.c.count) > 0
                     )
                 )
-            )
+            ).subquery('filtered_hotel_group')
 
             query = (
                 select(
