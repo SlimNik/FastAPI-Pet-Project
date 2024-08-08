@@ -17,7 +17,7 @@ body {
     margin: 10px 20px;
 }
 
-.hotel-container {
+.item-container {
     display: flex;
     align-items: center;
     margin: auto;
@@ -27,12 +27,12 @@ body {
     border-radius: 10px;
 }
     
-.hotel-container img {
+.item-container img {
     border-top-left-radius: inherit;
     border-bottom-left-radius: inherit;
 }
 
-.hotel-container-text {
+.item-container hgroup {
     padding-left: 20px;
     padding-right: 20px;
     text-align: center;

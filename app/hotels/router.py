@@ -32,7 +32,7 @@ router = APIRouter(
 
 
 @router.get('')
-async def get_all():
+async def get_all_hotels():
     return await HotelsDAO.get_all()
 
 

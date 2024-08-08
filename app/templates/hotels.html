@@ -6,7 +6,7 @@
               content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <link rel="stylesheet" href="../static/styles.css">
-        <title>Мечтариум</title>
+        <title>Мечтариум отели</title>
     </head>
 
     <body>
@@ -20,10 +20,10 @@
 
     <div>
         {% for hotel in hotels %}
-        <div class="hotel-container">
+        <div class="item-container">
             <img src="{{ url_for('static', path='images/' + hotel.image_id|string + '.webp') }}"
                  alt="Hotel image" width="350px">
-            <div class="hotel-container-text">
+            <div class="item-container-text">
                 <h2>{{ hotel.name }}</h2>
                 <h4>{{ hotel.location }}</h4>
                 <p>Свободные номера: {{ hotel.rooms_left }}/{{ hotel.rooms_quantity }}</p>

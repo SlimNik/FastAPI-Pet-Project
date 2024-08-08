@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="../static/styles.css">
+        <title>Мечтариум номера</title>
+    </head>
+
+    <body>
+    <div>
+        {% for room in rooms %}
+        <div class="item-container">
+            <img src="{{ url_for('static', path='images/room' + room.image_id|string + '.webp') }}"
+                 alt="Room image" width="350px">
+            <div class="item-container-text">
+                <h2>{{ room.name }}</h2>
+                <h3>{{ room.description }}</h3>
+                <h4>Цена за ночь: {{ room.price }} руб.</h4>
+                <h4>Цена за весь период: {{ room.total_cost }} руб.</h4>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    </body>
+</html>

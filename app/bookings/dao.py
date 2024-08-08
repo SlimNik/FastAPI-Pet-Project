@@ -17,20 +17,16 @@ class BookingsDAO(BaseDAO):
 
     @staticmethod
     async def get_available_rooms_by_room_id(room_id: int, date_from: date, date_to: date):
-        """
-        WITH booked_rooms AS (
-            SELECT * FROM "Bookings"
-            WHERE room_id = 1 AND
-            (date_from BETWEEN '2023-06-10' AND '2023-06-30') OR
-            (date_from <= '2023-06-10' AND date_to >= '2023-06-10') OR
-            (date_from <= '2023-06-30' AND date_to >= '2023-06-30')
-        )
-        SELECT R.quantity - COUNT(BR.room_id) AS rooms_left
-        FROM "Rooms" R LEFT JOIN booked_rooms BR ON R.id = BR.room_id
-        WHERE R.id = 1
-        GROUP BY R.quantity, BR.room_id
-        """
         async with async_session() as session:
+            """
+            WITH booked_rooms AS (
+                SELECT * FROM "Bookings"
+                WHERE room_id = 1 AND
+                (date_from BETWEEN '2023-06-10' AND '2023-06-30') OR
+                (date_from <= '2023-06-10' AND date_to >= '2023-06-10') OR
+                (date_from <= '2023-06-30' AND date_to >= '2023-06-30')
+            )
+            """
             booked_rooms = (
                 select(BookingModel).where(
                     and_(
@@ -43,7 +39,12 @@ class BookingsDAO(BaseDAO):
                     )
                 )
             ).cte('booked_rooms')
-
+            """
+            SELECT R.quantity - COUNT(BR.room_id) AS rooms_left
+            FROM "Rooms" R LEFT JOIN booked_rooms BR ON R.id = BR.room_id
+            WHERE R.id = 1
+            GROUP BY R.quantity, BR.room_id
+            """
             get_rooms_left = (
                 select((RoomModel.quantity - func.COUNT(booked_rooms.c.room_id)).label('rooms_left'))
                 .select_from(RoomModel).join(booked_rooms, booked_rooms.c.room_id == RoomModel.id, isouter=True)

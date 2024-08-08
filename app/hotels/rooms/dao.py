@@ -40,7 +40,7 @@ class RoomsDAO(BaseDAO):
             ).cte('booked_rooms')
             br = aliased(booked_rooms)
             """
-            SELECT R.id, COALESCE(H.rooms_left, R.quantity) AS rooms_left
+            SELECT R.*, COALESCE(H.rooms_left, R.quantity) AS rooms_left
             FROM "Rooms" R
             LEFT JOIN (
                 SELECT BR.room_id, BR.quantity - COUNT(BR.room_id) AS rooms_left
