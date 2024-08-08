@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 
-from app.hotels.router import get_hotels_by_location
+from app.hotels.router import get_hotels_by_location, get_all
 
 
 router = APIRouter(
@@ -17,9 +17,10 @@ templates = Jinja2Templates(
 @router.get("/hotels")
 async def get_hotels_page(
         request: Request,
-        hotels=Depends(get_hotels_by_location)
+        all_hotels=Depends(get_all),
+        hotels=Depends(get_hotels_by_location),
 ):
     return templates.TemplateResponse(
         name="hotels.html",
-        context={"request": request, "hotels": hotels}
+        context={"request": request, "hotels": hotels, "all_hotels": all_hotels}
     )
