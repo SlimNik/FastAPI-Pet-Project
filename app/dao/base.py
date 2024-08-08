@@ -12,9 +12,9 @@ class BaseDAO:
         async with async_session() as session:
             query = select(cls.model.__table__).filter_by(**filter_kwargs)
             # result.all() возвращает список кортежей с моделями
-            # result.scalars().all() возвращает список моделей
+            # result.scalars().all() возвращает только первый столбец, в случае если работаем с одной моделью, то возвращается список ее столбцов
             result = await session.execute(query)
-            # return result.mappings().all()
+            # return result.mappings().all() возвращает преобразованные в JSON модели
             return result.mappings().all()
 
     @classmethod

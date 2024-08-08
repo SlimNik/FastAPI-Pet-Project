@@ -15,7 +15,7 @@ class Settings(BaseSettings):
     JWT_KEY: str
     JWT_ALGORITHM: str
 
-    model_config = SettingsConfigDict(env_file='.env')
+    model_config = SettingsConfigDict(env_file=".env")
     # for Pydantic v1
     # class Config:
     #     env_file = ".env"

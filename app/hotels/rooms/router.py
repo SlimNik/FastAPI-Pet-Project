@@ -3,6 +3,7 @@ from datetime import date, datetime, timedelta
 from fastapi import APIRouter, Query
 
 from app.hotels.rooms.dao import RoomsDAO
+from app.hotels.rooms.schemas import RoomSchema
 
 
 router = APIRouter(
@@ -11,8 +12,8 @@ router = APIRouter(
 )
 
 
-@router.get('')
-async def get_all_rooms():
+@router.get('/rooms/all')
+async def get_all_rooms() -> list[RoomSchema]:
     return await RoomsDAO.get_all()
 
 

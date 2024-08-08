@@ -15,8 +15,8 @@ class RoomsDAO(BaseDAO):
 
     @classmethod
     async def get_all_by_hotel_id(cls, hotel_id: int, date_from: date, date_to: date):
-        r = aliased(RoomModel)
-        bm = aliased(BookingModel)
+        rooms = aliased(RoomModel)
+        bookings = aliased(BookingModel)
 
         async with async_session() as session:
             """
@@ -28,19 +28,19 @@ class RoomsDAO(BaseDAO):
             )
             """
             booked_rooms = (
-                select(bm, r)
-                .select_from(r).join(bm, r.id == bm.room_id, isouter=True)
+                select(bookings, rooms)
+                .select_from(rooms).join(bookings, rooms.id == bookings.room_id, isouter=True)
                 .where(
                     or_(
-                        bm.date_from.between(date_from, date_to),
-                        and_(bm.date_from <= date_from, bm.date_to >= date_from),
-                        and_(bm.date_from <= date_to, bm.date_to >= date_to)
+                        bookings.date_from.between(date_from, date_to),
+                        and_(bookings.date_from <= date_from, bookings.date_to >= date_from),
+                        and_(bookings.date_from <= date_to, bookings.date_to >= date_to)
                     )
                 )
             ).cte('booked_rooms')
-            br = aliased(booked_rooms)
+            b_rooms = aliased(booked_rooms)
             """
-            SELECT R.id, COALESCE(H.rooms_left, R.quantity) AS rooms_left
+            SELECT R.*, COALESCE(H.rooms_left, R.quantity) AS rooms_left
             FROM "Rooms" R
             LEFT JOIN (
                 SELECT BR.room_id, BR.quantity - COUNT(BR.room_id) AS rooms_left
@@ -51,27 +51,27 @@ class RoomsDAO(BaseDAO):
             """
             subq = (
                 select(
-                    br.c.room_id,
-                    (br.c.quantity - func.COUNT(br.c.room_id)).label('rooms_left')
+                    b_rooms.c.room_id,
+                    (b_rooms.c.quantity - func.COUNT(b_rooms.c.room_id)).label('rooms_left')
                 )
-                .group_by(br.c.room_id, br.c.quantity)
+                .group_by(b_rooms.c.room_id, b_rooms.c.quantity)
             ).subquery()
 
             query = (
                 select(
-                    r.id,
-                    r.hotel_id,
-                    r.name,
-                    r.description,
-                    r.services,
-                    r.price,
-                    r.quantity,
-                    r.image_id,
+                    rooms.id,
+                    rooms.hotel_id,
+                    rooms.name,
+                    rooms.description,
+                    rooms.services,
+                    rooms.price,
+                    rooms.quantity,
+                    rooms.image_id,
                     literal_column(f'{(date_to - date_from).days} * price').label('total_cost'),
-                    coalesce(subq.c.rooms_left, r.quantity).label('rooms_left')
+                    coalesce(subq.c.rooms_left, rooms.quantity).label('rooms_left')
                 )
-                .select_from(r).join(subq, r.id == subq.c.room_id, isouter=True)
-                .where(r.hotel_id == hotel_id)
+                .select_from(rooms).join(subq, rooms.id == subq.c.room_id, isouter=True)
+                .where(rooms.hotel_id == hotel_id)
             )
 
             result = await session.execute(query)

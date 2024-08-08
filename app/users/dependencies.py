@@ -11,7 +11,7 @@ from app.users.schemas import UserSchema
 
 
 def get_token(request: Request) -> str:
-    token = request.cookies.get('booking_access_token')
+    token = request.cookies.get("booking_access_token")
     if not token:
         raise AbsentTokenException
     return token
@@ -29,7 +29,7 @@ async def get_current_user(token: str = Depends(get_token)) -> UserSchema:
         )
     except JWTError:
         raise InvalidTokenFormatException
-    expire: str = payload.get('exp')
+    expire: str = payload.get("exp")
     if not expire or int(expire) < datetime.utcnow().timestamp():
         raise ExpiredTokenException
     user_id: str = payload.get('sub')

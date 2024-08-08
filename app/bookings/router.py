@@ -16,7 +16,7 @@ router = APIRouter(
 
 @router.get('')
 async def get_bookings(current_user: UserModel = Depends(get_current_user)):
-    return await BookingsDAO.get_all(user_id=int(current_user.id))
+    return await BookingsDAO.get_all(user_id=int(current_user[0].user_id))
 
 
 @router.post('/add')
@@ -26,7 +26,7 @@ async def add_booking(
         date_to: date,
         current_user: UserModel = Depends(get_current_user),
 ) -> None:
-    booking = await BookingsDAO.add(current_user.id, room_id, date_from, date_to)
+    booking = await BookingsDAO.add(current_user[0].user_id, room_id, date_from, date_to)
     if not booking:
         raise RoomCannotBeBookedException
 
