@@ -13,8 +13,8 @@
     <div class="welcome-container">
         <p><b><i>Добро пожаловать в Мечтариум!</i></b></p>
         <p style="font-size: 18px;">
-            Доступно отелей с {{ request.query_params['date_from'] }} по
-            {{ request.query_params['date_to'] }}: {{ hotels|length }}/{{ all_hotels|length}}
+            Доступно отелей с {{request.query_params['date_from']}} по
+            {{request.query_params['date_to']}}: {{hotels|length}}/{{all_hotels|length}}
         </p>
     </div>
 
@@ -24,9 +24,9 @@
             <img src="{{ url_for('static', path='images/' + hotel.image_id|string + '.webp') }}"
                  alt="Hotel image" width="350px">
             <div>
-                <h2>{{ hotel.name }}</h2>
-                <p>{{ hotel.location }}</p>
-                <p>Свободные номера: {{ hotel.rooms_left }}/{{ hotel.rooms_quantity }}</p>
+                <h2>{{hotel.name}}</h2>
+                <p>{{hotel.location}}</p>
+                <p>Свободные номера: {{hotel.rooms_left}}/{{hotel.rooms_quantity}}</p>
             </div>
         </div>
         {% endfor %}

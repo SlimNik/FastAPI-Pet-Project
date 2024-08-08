@@ -16,10 +16,10 @@
             <img src="{{ url_for('static', path='images/room' + room.image_id|string + '.webp') }}"
                  alt="Room image" width="350px">
             <div>
-                <h2>{{ room.name }}</h2>
-                <p>{{ room.description }}</p>
-                <p>Цена за ночь: {{ room.price }} руб.</p>
-                <p>Цена за весь период: {{ room.total_cost }} руб.</p>
+                <h2>{{room.name}}</h2>
+                <p>{{room.description}}</p>
+                <p>Цена за ночь: {{room.price}} руб.</p>
+                <p>Цена за весь период: {{room.total_cost}} руб.</p>
             </div>
         </div>
         {% endfor %}
