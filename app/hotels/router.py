@@ -32,7 +32,7 @@ router = APIRouter(
 
 
 @router.get('')
-async def get_all_hotels():
+async def get_all_hotels() -> list[HotelSchema]:
     return await HotelsDAO.get_all()
 
 
@@ -46,5 +46,5 @@ async def get_hotels_by_location(
         location: str,
         date_from: date = Query(..., description=f'Например {datetime.now().date()}'),
         date_to: date = Query(..., description=f'Например {datetime.now().date() + timedelta(days=7)}')
-):
+):  # если добавить валидацию данных list[HotelSchema], то не будет выдаваться столбец rooms_left, который не указан в схеме, но возвращается при запросе
     return await HotelsDAO.get_all_hotels_by_location(location, date_from, date_to)
