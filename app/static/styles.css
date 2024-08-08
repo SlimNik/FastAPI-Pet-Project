@@ -32,10 +32,10 @@ body {
     border-bottom-left-radius: inherit;
 }
 
-.item-container hgroup {
+.item-container h2, p {
     padding-left: 20px;
     padding-right: 20px;
     text-align: center;
-    width: 500px;
+    width: fit-content;
     margin: auto;
 }
