@@ -1,6 +1,12 @@
+from contextlib import asynccontextmanager
+from typing import AsyncIterator
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
+from redis import asyncio as aioredis
 
 from app.bookings.router import router as router_bookings
 from app.hotels.rooms.router import router as router_rooms
@@ -10,7 +16,15 @@ from app.pages.router import router as router_pages
 from app.users.router import router as router_users
 
 
-app = FastAPI()
+# from fast-api cache documentation
+@asynccontextmanager
+async def lifespan(_: FastAPI) -> AsyncIterator[None]:
+    redis = aioredis.from_url("redis://localhost", encoding='utf-8', decode_responses=True)
+    FastAPICache.init(RedisBackend(redis), prefix="cache")
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 # монтирование отличается от подключения роутера тем, что подключается отдельное приложение со своим набором эндпойнтов
 app.mount("/static", StaticFiles(directory="app/static"), "static")
