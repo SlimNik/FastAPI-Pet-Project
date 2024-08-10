@@ -1,6 +1,7 @@
 from datetime import date, datetime, timedelta
 
 from fastapi import APIRouter, Query
+from fastapi_cache.decorator import cache
 
 from app.hotels.dao import HotelsDAO
 from app.hotels.schemas import HotelSchema
@@ -42,6 +43,7 @@ async def get_hotel_by_id(hotel_id: str) -> HotelSchema:
 
 
 @router.get("/{location}")
+@cache(expire=20)
 async def get_hotels_by_location(
         location: str,
         date_from: date = Query(..., description=f'Например {datetime.now().date()}'),
