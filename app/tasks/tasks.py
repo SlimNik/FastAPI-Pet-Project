@@ -5,7 +5,7 @@ from PIL import Image
 from app.tasks.celery_config import celery_app
 
 
-@celery_app.tasks
+@celery_app.task
 def process_image(path: str):
     img_path = Path(path)
     img = Image.open(img_path)
