@@ -21,7 +21,7 @@
     <div>
         {% for hotel in hotels %}
         <div class="item-container">
-            <img src="{{ url_for('static', path='images/' + hotel.image_id|string + '.webp') }}"
+            <img src="{{ url_for('static', path='images/hotels/hotel' + hotel.image_id|string + '.webp') }}"
                  alt="Hotel image" width="350px">
             <div>
                 <h2>{{hotel.name}}</h2>

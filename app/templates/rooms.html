@@ -13,7 +13,7 @@
     <div>
         {% for room in rooms %}
         <div class="item-container">
-            <img src="{{ url_for('static', path='images/room' + room.image_id|string + '.webp') }}"
+            <img src="{{ url_for('static', path='images/rooms/room' + room.image_id|string + '.webp') }}"
                  alt="Room image" width="350px">
             <div>
                 <h2>{{room.name}}</h2>

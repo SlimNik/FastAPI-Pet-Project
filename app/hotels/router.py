@@ -43,7 +43,6 @@ async def get_hotel_by_id(hotel_id: str) -> HotelSchema:
 
 
 @router.get("/{location}")
-@cache(expire=20)
 async def get_hotels_by_location(
         location: str,
         date_from: date = Query(..., description=f'Например {datetime.now().date()}'),
