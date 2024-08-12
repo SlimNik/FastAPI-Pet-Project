@@ -13,3 +13,6 @@ class BookingSchema(BaseModel):
     price: int
     total_cost: int
     total_days: int
+
+    class Config:
+        from_attributes = True
