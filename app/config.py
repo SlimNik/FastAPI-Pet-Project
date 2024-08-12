@@ -15,6 +15,14 @@ class Settings(BaseSettings):
     JWT_KEY: str
     JWT_ALGORITHM: str
 
+    REDIS_HOST: str
+    REDIS_PORT: int
+
+    SMTP_HOST: str
+    SMTP_PORT: int
+    SMTP_USER: str
+    SMTP_PASS: str
+
     model_config = SettingsConfigDict(env_file=".env")
     # for Pydantic v1
     # class Config:
