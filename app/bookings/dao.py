@@ -81,24 +81,24 @@ class BookingsDAO(BaseDAO):
     @classmethod
     async def get_all(cls, user_id: int):
         async with async_session() as session:
-            bm = aliased(BookingModel)
-            rm = aliased(RoomModel)
+            booked_r = aliased(BookingModel)
+            rooms = aliased(RoomModel)
             query = (
                 select(
-                    bm.room_id,
-                    bm.user_id,
-                    bm.date_from,
-                    bm.date_to,
-                    bm.price,
-                    bm.total_cost,
-                    bm.total_days,
-                    rm.image_id,
-                    rm.name,
-                    rm.description,
-                    rm.services
+                    booked_r.room_id,
+                    booked_r.user_id,
+                    booked_r.date_from,
+                    booked_r.date_to,
+                    booked_r.price,
+                    booked_r.total_cost,
+                    booked_r.total_days,
+                    rooms.image_id,
+                    rooms.name,
+                    rooms.description,
+                    rooms.services
                 )
-                .select_from(bm).join(rm, rm.id == bm.room_id)
-                .where(bm.user_id == user_id)
+                .select_from(booked_r).join(rooms, rooms.id == booked_r.room_id)
+                .where(booked_r.user_id == user_id)
             )
             result = await session.execute(query)
             return result.mappings().all()
